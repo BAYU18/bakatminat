@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Tes Bakat & Minat Anak</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body{
+  margin:0;
+  font-family:"Comic Sans MS", Arial;
+  background:linear-gradient(135deg,#60a5fa,#fde68a);
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.app{
+  width:760px;
+  background:#fff;
+  padding:30px;
+  border-radius:25px;
+  box-shadow:0 20px 35px rgba(0,0,0,.3);
+  animation:pop .6s;
+}
+h1{text-align:center;color:#2563eb}
+.question{font-size:20px;margin:20px 0}
+.option{
+  padding:14px;
+  margin:10px 0;
+  border-radius:15px;
+  background:#e0f2fe;
+  cursor:pointer;
+  transition:.2s;
+}
+.option:hover{
+  background:#bae6fd;
+  transform:scale(1.03);
+}
+.progress{
+  height:12px;
+  background:#e5e7eb;
+  border-radius:10px;
+  overflow:hidden;
+  margin-top:15px;
+}
+.bar{
+  height:100%;
+  background:#2563eb;
+  width:0%;
+}
+.section{
+  margin-top:15px;
+  padding:15px;
+  border-radius:15px;
+}
+.good{background:#dcfce7}
+.warn{background:#fee2e2}
+.info{background:#e0f2fe}
+.start{
+  text-align:center;
+}
+.start button{
+  padding:14px 25px;
+  font-size:18px;
+  border:none;
+  border-radius:20px;
+  cursor:pointer;
+  background:#4ade80;
+}
+.start button:hover{background:#22c55e}
+.music-btn{
+  margin-top:10px;
+  padding:8px 14px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  background:#60a5fa;
+  color:white;
+}
+@keyframes pop{
+  from{opacity:0;transform:scale(.9)}
+  to{opacity:1;transform:scale(1)}
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🎵 BACKSOUND LOKAL -->
+<audio id="bgm" loop>
+  <source src="musik.mp3" type="audio/mpeg">
+</audio>
+
+<div class="app" id="app">
+  <h1>🌈 Tes Bakat & Minat Anak 🌈</h1>
+  <div class="start">
+    <p>Jawab dengan jujur ya 😊</p>
+    <button onclick="startTest()">▶️ Mulai Tes</button><br><br>
+    <button class="music-btn" onclick="toggleMusic()">🔊 Musik ON / OFF</button>
+  </div>
+</div>
+
+<script>
+const bgm = document.getElementById("bgm");
+
+function toggleMusic(){
+  bgm.paused ? bgm.play() : bgm.pause();
+}
+
+const scores = {
+  "Bahasa & Komunikasi":0,
+  "Logika & Matematika":0,
+  "Visual & Seni Rupa":0,
+  "Musik & Ritme":0,
+  "Gerak & Olahraga":0,
+  "Sosial & Kepemimpinan":0,
+  "Empati & Kepedulian":0,
+  "Mekanik & Teknologi":0
+};
+
+const advice = {
+  "Bahasa & Komunikasi":"Latih membaca, bercerita, dan berbicara di depan kelas.",
+  "Logika & Matematika":"Ajak bermain teka-teki dan berhitung.",
+  "Visual & Seni Rupa":"Sediakan alat gambar dan kerajinan.",
+  "Musik & Ritme":"Ajak bernyanyi dan bermain alat musik.",
+  "Gerak & Olahraga":"Dukung aktivitas fisik dan olahraga.",
+  "Sosial & Kepemimpinan":"Latih memimpin kelompok kecil.",
+  "Empati & Kepedulian":"Biasakan berbagi dan menolong teman.",
+  "Mekanik & Teknologi":"Kenalkan lego, eksperimen, dan teknologi sederhana."
+};
+
+let index = 0;
+
+const questions = [
+{q:"Saat waktu luang di sekolah, aku lebih suka:",o:{
+ A:["Membaca atau bercerita","Bahasa & Komunikasi"],
+ B:["Menggambar","Visual & Seni Rupa"],
+ C:["Bermain bola","Gerak & Olahraga"],
+ D:["Merakit mainan","Mekanik & Teknologi"]
+}},
+{q:"Aku senang jika diminta:",o:{
+ A:["Menghitung soal","Logika & Matematika"],
+ B:["Bernyanyi","Musik & Ritme"],
+ C:["Mengajak teman","Sosial & Kepemimpinan"],
+ D:["Menggambar bebas","Visual & Seni Rupa"]
+}},
+{q:"Aku mudah mengingat:",o:{
+ A:["Lagu","Musik & Ritme"],
+ B:["Angka","Logika & Matematika"],
+ C:["Cerita","Bahasa & Komunikasi"],
+ D:["Gerakan","Gerak & Olahraga"]
+}},
+{q:"Jika melihat teman sedih, aku:",o:{
+ A:["Menanyakan keadaannya","Empati & Kepedulian"],
+ B:["Menghibur","Sosial & Kepemimpinan"],
+ C:["Pergi bermain","Gerak & Olahraga"],
+ D:["Diam saja","Logika & Matematika"]
+}},
+{q:"Aku penasaran jika melihat:",o:{
+ A:["Mainan rusak","Mekanik & Teknologi"],
+ B:["Buku baru","Bahasa & Komunikasi"],
+ C:["Alat musik","Musik & Ritme"],
+ D:["Lapangan olahraga","Gerak & Olahraga"]
+}},
+{q:"Aku suka belajar dengan cara:",o:{
+ A:["Membaca","Bahasa & Komunikasi"],
+ B:["Menghitung","Logika & Matematika"],
+ C:["Menggambar","Visual & Seni Rupa"],
+ D:["Bergerak","Gerak & Olahraga"]
+}},
+{q:"Dalam kelompok, aku sering:",o:{
+ A:["Mengatur teman","Sosial & Kepemimpinan"],
+ B:["Mendengarkan","Empati & Kepedulian"],
+ C:["Menghitung tugas","Logika & Matematika"],
+ D:["Membuat hiasan","Visual & Seni Rupa"]
+}},
+{q:"Aku bangga jika bisa:",o:{
+ A:["Membantu teman","Empati & Kepedulian"],
+ B:["Memimpin permainan","Sosial & Kepemimpinan"],
+ C:["Menyelesaikan soal","Logika & Matematika"],
+ D:["Membuat alat","Mekanik & Teknologi"]
+}},
+{q:"Aku suka kegiatan yang:",o:{
+ A:["Kreatif","Visual & Seni Rupa"],
+ B:["Penuh irama","Musik & Ritme"],
+ C:["Banyak bergerak","Gerak & Olahraga"],
+ D:["Banyak bicara","Bahasa & Komunikasi"]
+}},
+{q:"Aku tertarik belajar tentang:",o:{
+ A:["Cerita","Bahasa & Komunikasi"],
+ B:["Angka","Logika & Matematika"],
+ C:["Mesin","Mekanik & Teknologi"],
+ D:["Nada","Musik & Ritme"]
+}},
+{q:"Aku senang jika guru:",o:{
+ A:["Mengajak diskusi","Sosial & Kepemimpinan"],
+ B:["Memberi tantangan","Logika & Matematika"],
+ C:["Menggambar","Visual & Seni Rupa"],
+ D:["Bermain","Gerak & Olahraga"]
+}},
+{q:"Aku merasa senang ketika:",o:{
+ A:["Teman senang","Empati & Kepedulian"],
+ B:["Bisa memimpin","Sosial & Kepemimpinan"],
+ C:["Bisa membuat sesuatu","Mekanik & Teknologi"],
+ D:["Bisa bercerita","Bahasa & Komunikasi"]
+}},
+{q:"Aku lebih suka tugas yang:",o:{
+ A:["Menghitung","Logika & Matematika"],
+ B:["Menggambar","Visual & Seni Rupa"],
+ C:["Bernyanyi","Musik & Ritme"],
+ D:["Berlari","Gerak & Olahraga"]
+}},
+{q:"Aku suka membantu dengan cara:",o:{
+ A:["Mendengarkan","Empati & Kepedulian"],
+ B:["Mengatur","Sosial & Kepemimpinan"],
+ C:["Memperbaiki","Mekanik & Teknologi"],
+ D:["Menjelaskan","Bahasa & Komunikasi"]
+}},
+{q:"Aku paling bersemangat saat:",o:{
+ A:["Lomba olahraga","Gerak & Olahraga"],
+ B:["Lomba menggambar","Visual & Seni Rupa"],
+ C:["Lomba berhitung","Logika & Matematika"],
+ D:["Lomba menyanyi","Musik & Ritme"]
+}},
+{q:"Aku sering bertanya tentang:",o:{
+ A:["Cara kerja alat","Mekanik & Teknologi"],
+ B:["Cerita","Bahasa & Komunikasi"],
+ C:["Perasaan teman","Empati & Kepedulian"],
+ D:["Aturan permainan","Logika & Matematika"]
+}},
+{q:"Aku senang bermain dengan:",o:{
+ A:["Teman banyak","Sosial & Kepemimpinan"],
+ B:["Alat musik","Musik & Ritme"],
+ C:["Bola","Gerak & Olahraga"],
+ D:["Kertas gambar","Visual & Seni Rupa"]
+}},
+{q:"Aku merasa hebat jika:",o:{
+ A:["Bisa memimpin","Sosial & Kepemimpinan"],
+ B:["Bisa menolong","Empati & Kepedulian"],
+ C:["Bisa menghitung cepat","Logika & Matematika"],
+ D:["Bisa membuat alat","Mekanik & Teknologi"]
+}},
+{q:"Aku senang belajar melalui:",o:{
+ A:["Cerita","Bahasa & Komunikasi"],
+ B:["Angka","Logika & Matematika"],
+ C:["Gambar","Visual & Seni Rupa"],
+ D:["Gerakan","Gerak & Olahraga"]
+}}
+];
+
+// random soal
+questions.sort(()=>Math.random()-0.5);
+
+function startTest(){
+  bgm.volume = 0.4;
+  bgm.play();
+  index = 0;
+  loadQuestion();
+}
+
+function loadQuestion(){
+  document.getElementById("app").innerHTML = `
+    <h1>🌈 Tes Bakat & Minat Anak 🌈</h1>
+    <div class="question">${index+1}. ${questions[index].q}</div>
+    <div id="options"></div>
+    <div class="progress"><div class="bar" id="bar"></div></div>
+    <div style="text-align:center">
+      <button class="music-btn" onclick="toggleMusic()">🔊 Musik ON / OFF</button>
+    </div>
+  `;
+  const opt = document.getElementById("options");
+  for(let k in questions[index].o){
+    const d = document.createElement("div");
+    d.className = "option";
+    d.innerText = k+". "+questions[index].o[k][0];
+    d.onclick = ()=>selectAnswer(questions[index].o[k][1]);
+    opt.appendChild(d);
+  }
+  document.getElementById("bar").style.width =
+    ((index)/questions.length*100)+"%";
+}
+
+function selectAnswer(cat){
+  scores[cat]++;
+  index++;
+  index < questions.length ? loadQuestion() : showResult();
+}
+
+function showResult(){
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const best = sorted[0][0];
+  const worst = sorted[sorted.length-1][0];
+
+  document.getElementById("app").innerHTML = `
+    <h1>📊 Hasil Tes</h1>
+    <canvas id="chart"></canvas>
+
+    <div class="section good">
+      ⭐ <b>Kelebihan Utama:</b><br>${best}
+    </div>
+
+    <div class="section warn">
+      ⚠️ <b>Perlu Ditingkatkan:</b><br>${worst}
+    </div>
+
+    <div class="section info">
+      🛠️ <b>Saran:</b><br>${advice[worst]}
+    </div>
+  `;
+
+  new Chart(document.getElementById("chart"),{
+    type:"radar",
+    data:{
+      labels:Object.keys(scores),
+      datasets:[{
+        data:Object.values(scores),
+        backgroundColor:"rgba(37,99,235,.4)",
+        borderColor:"#2563eb"
+      }]
+    },
+    options:{scales:{r:{beginAtZero:true,max:5}}}
+  });
+}
+</script>
+
+</body>
+</html>
